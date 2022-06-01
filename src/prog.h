@@ -26,12 +26,14 @@ struct Prog
     size_t nmats;
 
     float timediff;
+
+    float speed;
 };
 
 struct Prog *prog_alloc(SDL_Window *w, SDL_Renderer *r);
 void prog_free(struct Prog *p);
 
-void prog_mainloop(struct Prog *p);
+bool prog_mainloop(struct Prog *p);
 
 void prog_render(struct Prog *p);
 Vec3f prog_render_cast_ray(struct Prog *p, Vec3f o, Vec3f dir);

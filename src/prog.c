@@ -5,6 +5,7 @@ struct Prog *prog_alloc(SDL_Window *w, SDL_Renderer *r)
 {
     struct Prog *p = malloc(sizeof(struct Prog));
     p->running = true;
+
     p->dead = false;
     p->window = w;
     p->rend = r;
@@ -24,6 +25,8 @@ struct Prog *prog_alloc(SDL_Window *w, SDL_Renderer *r)
     p->mats[0] = mat_alloc((Vec3f){ .9f, .8f, .9f }, 50.f, 1.f, 1.f);
     p->mats[1] = mat_alloc((Vec3f){ .9f, 1.f, .9f }, 2.f, .5f, .2f);
     p->mats[2] = mat_alloc((Vec3f){ .8f, .9f, 1.f }, 50.f, 1.f, 1.f);
+
+    p->speed = .01f;
 
     return p;
 }
@@ -48,12 +51,13 @@ void prog_free(struct Prog *p)
 }
 
 
-void prog_mainloop(struct Prog *p)
+bool prog_mainloop(struct Prog *p)
 {
     SDL_Event evt;
 
     Uint32 start = SDL_GetTicks();
     Uint32 end = SDL_GetTicks();
+    bool restart = false;
 
     while (p->running)
     {
@@ -65,6 +69,15 @@ void prog_mainloop(struct Prog *p)
         {
             if (evt.type == SDL_QUIT)
                 p->running = false;
+
+            if (evt.type == SDL_KEYDOWN)
+            {
+                if (evt.key.keysym.sym == SDLK_r && p->dead)
+                {
+                    p->running = false;
+                    restart = true;
+                }
+            }
         }
 
         if (!p->dead)
@@ -77,7 +90,7 @@ void prog_mainloop(struct Prog *p)
             p->cam.x = fmin(fmax(p->cam.x, -3.f), 3.f);
         }
 
-        if (p->nspheres < 10 && rand() % 100 < 2)
+        if (p->nspheres < 10 && rand() % 100 < 3)
         {
             p->spheres = realloc(p->spheres, sizeof(struct Sphere*) * ++p->nspheres);
             p->spheres[p->nspheres - 1] = sphere_alloc((Vec3f){ (float)(rand() % 60 - 30) / 10.f, 0.f, 20.f }, .5f, p->mats[rand() % p->nmats]);
@@ -91,8 +104,11 @@ void prog_mainloop(struct Prog *p)
                 p->spheres[i]->c.z = 20.f;
             }
 
-            p->spheres[i]->c.z -= .01f * p->timediff;
+            p->spheres[i]->c.z -= p->speed * p->timediff;
         }
+
+        if (!p->dead)
+            p->speed += .00001f;
 
         p->cam.y += 1.f;
         for (size_t i = 0; i < p->nspheres; ++i)
@@ -110,6 +126,7 @@ void prog_mainloop(struct Prog *p)
 
         if (p->dead)
         {
+            p->speed = .01f;
             SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_BLEND);
             SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 150);
             SDL_RenderFillRect(p->rend, 0);
@@ -118,6 +135,8 @@ void prog_mainloop(struct Prog *p)
         SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
         SDL_RenderPresent(p->rend);
     }
+
+    return restart;
 }
 
 
