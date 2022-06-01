@@ -5,6 +5,7 @@ struct Prog *prog_alloc(SDL_Window *w, SDL_Renderer *r)
 {
     struct Prog *p = malloc(sizeof(struct Prog));
     p->running = true;
+    p->dead = false;
     p->window = w;
     p->rend = r;
 
@@ -60,7 +61,21 @@ void prog_mainloop(struct Prog *p)
         p->timediff = end - start;
         start = end;
 
-        prog_events(p, &evt);
+        while (SDL_PollEvent(&evt))
+        {
+            if (evt.type == SDL_QUIT)
+                p->running = false;
+        }
+
+        if (!p->dead)
+        {
+            const Uint8* keys = SDL_GetKeyboardState(0);
+
+            if (keys[SDL_SCANCODE_LEFT]) p->cam.x -= .003f * p->timediff;
+            if (keys[SDL_SCANCODE_RIGHT]) p->cam.x += .003f * p->timediff;
+
+            p->cam.x = fmin(fmax(p->cam.x, -3.f), 3.f);
+        }
 
         if (p->nspheres < 10 && rand() % 100 < 2)
         {
@@ -84,6 +99,7 @@ void prog_mainloop(struct Prog *p)
         {
             if (vec_len(vec_sub(p->cam, p->spheres[i]->c)) < .5f)
             {
+                p->dead = true;
             }
         }
         p->cam.y -= 1.f;
@@ -92,30 +108,16 @@ void prog_mainloop(struct Prog *p)
 
         prog_render(p);
 
+        if (p->dead)
+        {
+            SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_BLEND);
+            SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 150);
+            SDL_RenderFillRect(p->rend, 0);
+        }
+
         SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
         SDL_RenderPresent(p->rend);
     }
-}
-
-
-void prog_events(struct Prog *p, SDL_Event *evt)
-{
-    while (SDL_PollEvent(evt))
-    {
-        switch (evt->type)
-        {
-        case SDL_QUIT:
-            p->running = false;
-            break;
-        }
-    }
-
-    const Uint8* keys = SDL_GetKeyboardState(0);
-
-    if (keys[SDL_SCANCODE_LEFT]) p->cam.x -= .003f * p->timediff;
-    if (keys[SDL_SCANCODE_RIGHT]) p->cam.x += .003f * p->timediff;
-
-    p->cam.x = fmin(fmax(p->cam.x, -3.f), 3.f);
 }
 
 
