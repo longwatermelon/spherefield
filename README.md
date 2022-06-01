@@ -4,6 +4,7 @@ Cubefield but with raytraced spheres
 # Controls
 * Left / right arrow keys: move
 * R: restart
+* F: toggle flash
 
 https://user-images.githubusercontent.com/73869536/171477000-9b6c7a1c-0f61-4b36-a668-bf9fd0147ce4.mp4
 

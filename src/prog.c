@@ -131,6 +131,7 @@ bool prog_mainloop(struct Prog *p)
             p->speed += .00001f;
 
         p->cam.y += 1.f;
+        p->cam.z += 2.f;
         for (size_t i = 0; i < p->nspheres; ++i)
         {
             if (vec_len(vec_sub(p->cam, p->spheres[i]->c)) < .5f)
@@ -139,6 +140,7 @@ bool prog_mainloop(struct Prog *p)
             }
         }
         p->cam.y -= 1.f;
+        p->cam.z -= 2.f;
 
         static float flash_dir = .01f;
 
