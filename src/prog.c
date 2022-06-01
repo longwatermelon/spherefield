@@ -20,8 +20,8 @@ struct Prog *prog_alloc(SDL_Window *w, SDL_Renderer *r)
 
     p->nlights = 2;
     p->lights = malloc(sizeof(struct Light*) * p->nlights);
-    p->lights[0] = light_alloc((Vec3f){ 1.6f, -1.8f, -1.5f }, .8f);
-    p->lights[1] = light_alloc((Vec3f){ -1.5f -3.4f -3.8f }, .8f);
+    p->lights[0] = light_alloc((Vec3f){ 1.6f, -1.8f, -1.5f }, .7f);
+    p->lights[1] = light_alloc((Vec3f){ -1.5f -3.4f -3.8f }, .7f);
 
     p->nmats = 7;
     p->mats = malloc(sizeof(struct Material*) * p->nmats);
