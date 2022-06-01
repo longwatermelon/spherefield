@@ -31,6 +31,9 @@ struct Prog
     float timediff;
 
     float speed;
+
+    bool flash;
+    float flash_accel;
 };
 
 struct Prog *prog_alloc(SDL_Window *w, SDL_Renderer *r);

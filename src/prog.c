@@ -35,6 +35,9 @@ struct Prog *prog_alloc(SDL_Window *w, SDL_Renderer *r)
 
     p->speed = .01f;
 
+    p->flash = false;
+    p->flash_accel = 0.f;
+
     return p;
 }
 
@@ -86,6 +89,14 @@ bool prog_mainloop(struct Prog *p)
                     p->running = false;
                     restart = true;
                 }
+
+                if (!p->dead)
+                {
+                    if (evt.key.keysym.sym == SDLK_f)
+                    {
+                        p->flash = !p->flash;
+                    }
+                }
             }
         }
 
@@ -128,6 +139,26 @@ bool prog_mainloop(struct Prog *p)
             }
         }
         p->cam.y -= 1.f;
+
+        static float flash_dir = .01f;
+
+        if (p->flash)
+        {
+            if (p->flash_accel < -.2f || p->flash_accel > .1f)
+                flash_dir *= -1.f;
+
+            p->flash_accel += flash_dir;
+            
+            for (size_t i = 0; i < p->nlights; ++i)
+            {
+                p->lights[i]->in += p->flash_accel;
+                p->lights[i]->in = fmax(p->lights[i]->in, 0.f);
+            }
+        }
+        else
+        {
+            flash_dir = .01f;
+        }
 
         SDL_RenderClear(p->rend);
 
