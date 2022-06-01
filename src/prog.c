@@ -18,9 +18,11 @@ struct Prog *prog_alloc(SDL_Window *w, SDL_Renderer *r)
     p->lights[0] = light_alloc((Vec3f){ 1.6f, -1.8f, -1.5f }, .8f);
     p->lights[1] = light_alloc((Vec3f){ -1.5f -3.4f -3.8f }, .8f);
 
-    p->nmats = 1;
+    p->nmats = 3;
     p->mats = malloc(sizeof(struct Material*) * p->nmats);
     p->mats[0] = mat_alloc((Vec3f){ .9f, .8f, .9f }, 50.f, 1.f, 1.f);
+    p->mats[1] = mat_alloc((Vec3f){ .9f, 1.f, .9f }, 2.f, .5f, .2f);
+    p->mats[2] = mat_alloc((Vec3f){ .8f, .9f, 1.f }, 50.f, 1.f, 1.f);
 
     return p;
 }
@@ -74,7 +76,7 @@ void prog_mainloop(struct Prog *p)
         if (p->nspheres < 10 && rand() % 100 < 2)
         {
             p->spheres = realloc(p->spheres, sizeof(struct Sphere*) * ++p->nspheres);
-            p->spheres[p->nspheres - 1] = sphere_alloc((Vec3f){ (float)(rand() % 60 - 30) / 10.f, 0.f, 20.f }, .5f, p->mats[0]);
+            p->spheres[p->nspheres - 1] = sphere_alloc((Vec3f){ (float)(rand() % 60 - 30) / 10.f, 0.f, 20.f }, .5f, p->mats[rand() % p->nmats]);
         }
 
         for (size_t i = 0; i < p->nspheres; ++i)
