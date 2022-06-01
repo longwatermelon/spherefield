@@ -13,11 +13,16 @@ struct Prog
     SDL_Window *window;
     SDL_Renderer *rend;
 
+    Vec3f cam;
+
     struct Sphere **spheres;
     size_t nspheres;
 
     struct Light **lights;
     size_t nlights;
+
+    struct Material **mats;
+    size_t nmats;
 };
 
 struct Prog *prog_alloc(SDL_Window *w, SDL_Renderer *r);
