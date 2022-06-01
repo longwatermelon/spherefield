@@ -23,11 +23,15 @@ struct Prog *prog_alloc(SDL_Window *w, SDL_Renderer *r)
     p->lights[0] = light_alloc((Vec3f){ 1.6f, -1.8f, -1.5f }, .8f);
     p->lights[1] = light_alloc((Vec3f){ -1.5f -3.4f -3.8f }, .8f);
 
-    p->nmats = 3;
+    p->nmats = 7;
     p->mats = malloc(sizeof(struct Material*) * p->nmats);
     p->mats[0] = mat_alloc((Vec3f){ .9f, .8f, .9f }, 50.f, 1.f, 1.f);
     p->mats[1] = mat_alloc((Vec3f){ .9f, 1.f, .9f }, 2.f, .5f, .2f);
     p->mats[2] = mat_alloc((Vec3f){ .8f, .9f, 1.f }, 50.f, 1.f, 1.f);
+    p->mats[3] = mat_alloc((Vec3f){ .9f, .7f, .7f }, 90.f, 1.f, 1.f);
+    p->mats[4] = mat_alloc((Vec3f){ .8f, 1.f, .8f }, 90.f, 1.f, 1.f);
+    p->mats[5] = mat_alloc((Vec3f){ 1.f, .8f, .7f }, 70.f, 1.f, 1.f);
+    p->mats[6] = mat_alloc((Vec3f){ 1.f, .8f, 1.f }, 90.f, 1.f, 1.f);
 
     p->speed = .01f;
 
