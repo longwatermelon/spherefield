@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-std=gnu17 -ggdb -Wall -Wpedantic -Werror
+CFLAGS=-std=gnu17 -ggdb -Wall -Wpedantic -Werror -O3
 LIBS=-lm -lSDL2
 
 SRC=$(wildcard src/*.c)
