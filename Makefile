@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-std=gnu17 -ggdb -Wall -Wpedantic -Werror -O3
-LIBS=-lm -lSDL2
+LIBS=-lm -lSDL2 -lSDL2_ttf
 
 SRC=$(wildcard src/*.c)
 OBJS=$(addprefix obj/, $(SRC:.c=.o))

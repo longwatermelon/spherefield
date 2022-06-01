@@ -1,4 +1,5 @@
 #include "prog.h"
+#include "util.h"
 
 
 struct Prog *prog_alloc(SDL_Window *w, SDL_Renderer *r)
@@ -9,6 +10,8 @@ struct Prog *prog_alloc(SDL_Window *w, SDL_Renderer *r)
     p->dead = false;
     p->window = w;
     p->rend = r;
+
+    p->font = TTF_OpenFont("res/font.ttf", 16);
 
     p->cam = (Vec3f){ 0.f, -1.f, 0.f };
 
@@ -46,6 +49,8 @@ void prog_free(struct Prog *p)
     free(p->spheres);
     free(p->lights);
     free(p->mats);
+
+    TTF_CloseFont(p->font);
 
     free(p);
 }
@@ -130,7 +135,26 @@ bool prog_mainloop(struct Prog *p)
             SDL_SetRenderDrawBlendMode(p->rend, SDL_BLENDMODE_BLEND);
             SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 150);
             SDL_RenderFillRect(p->rend, 0);
+
+            SDL_Texture *tex = util_render_text(p->rend, p->font, "Press [r] to restart", (SDL_Color){ 255, 255, 255 });
+            SDL_Rect r;
+            SDL_QueryTexture(tex, 0, 0, &r.w, &r.h);
+            r.x = 200 - (r.w / 2);
+            r.y = 200 - (r.h / 2);
+
+            SDL_RenderCopy(p->rend, tex, 0, &r);
+            SDL_DestroyTexture(tex);
         }
+
+        SDL_Vertex v[3];
+        v[0].color = (SDL_Color){ 255, 255, 255, 255 };
+        v[1].color = (SDL_Color){ 255, 255, 255, 255 };
+        v[2].color = (SDL_Color){ 255, 255, 255, 255 };
+        v[0].position = (SDL_FPoint){ 195.f, 400.f };
+        v[1].position = (SDL_FPoint){ 205.f, 400.f };
+        v[2].position = (SDL_FPoint){ 200.f, 380.f };
+
+        SDL_RenderGeometry(p->rend, 0, v, 3, 0, 0);
 
         SDL_SetRenderDrawColor(p->rend, 0, 0, 0, 255);
         SDL_RenderPresent(p->rend);
