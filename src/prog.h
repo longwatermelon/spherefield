@@ -35,7 +35,7 @@ void prog_events(struct Prog *p, SDL_Event *evt);
 
 void prog_render(struct Prog *p);
 Vec3f prog_render_cast_ray(struct Prog *p, Vec3f o, Vec3f dir);
-bool render_scene_cast_ray(struct Prog *p, Vec3f o, Vec3f dir, Vec3f *hit, Vec3f *norm, struct Material **mat);
+bool prog_scene_cast_ray(struct Prog *p, Vec3f o, Vec3f dir, Vec3f *hit, Vec3f *norm, struct Material **mat);
 
 #endif
 

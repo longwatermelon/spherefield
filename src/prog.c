@@ -51,25 +51,14 @@ void prog_mainloop(struct Prog *p)
 {
     SDL_Event evt;
 
-#if 0
-    p->spheres = malloc(sizeof(struct Sphere*) * 1);
-    p->nspheres = 1;
-    struct Material *mat = mat_alloc((Vec3f){ 1.f, 0.f, .5f }, 50, 1.f, 1.f);
-    p->spheres[0] = sphere_alloc((Vec3f){ 0.f, 0.f, 5.f }, 1.f, mat);
-    p->lights = malloc(sizeof(struct Light*) * ++p->nlights);
-    p->lights[0] = light_alloc((Vec3f){ 0.f, 0.f, 0.f }, .8f);
-#endif
-
     Uint32 start = SDL_GetTicks();
     Uint32 end = SDL_GetTicks();
-//    float fps = 0.f;
 
     while (p->running)
     {
         end = SDL_GetTicks();
         p->timediff = end - start;
         start = end;
-//        fps = frame_time > 0 ? 1000.f / frame_time : 0.f;
 
         prog_events(p, &evt);
 
@@ -89,6 +78,15 @@ void prog_mainloop(struct Prog *p)
 
             p->spheres[i]->c.z -= .01f * p->timediff;
         }
+
+        p->cam.y += 1.f;
+        for (size_t i = 0; i < p->nspheres; ++i)
+        {
+            if (vec_len(vec_sub(p->cam, p->spheres[i]->c)) < .5f)
+            {
+            }
+        }
+        p->cam.y -= 1.f;
 
         SDL_RenderClear(p->rend);
 
@@ -147,7 +145,7 @@ Vec3f prog_render_cast_ray(struct Prog *p, Vec3f o, Vec3f dir)
     Vec3f hit, norm;
     struct Material *mat;
 
-    if (!render_scene_cast_ray(p, o, dir, &hit, &norm, &mat))
+    if (!prog_scene_cast_ray(p, o, dir, &hit, &norm, &mat))
         return (Vec3f){ 0.f, 0.f, 0.f };
 
     float dlight = 0.f;
@@ -176,7 +174,7 @@ Vec3f prog_render_cast_ray(struct Prog *p, Vec3f o, Vec3f dir)
 }
 
 
-bool render_scene_cast_ray(struct Prog *p, Vec3f o, Vec3f dir, Vec3f *hit, Vec3f *norm, struct Material **mat)
+bool prog_scene_cast_ray(struct Prog *p, Vec3f o, Vec3f dir, Vec3f *hit, Vec3f *norm, struct Material **mat)
 {
     float nearest = INFINITY;
 
