@@ -23,6 +23,8 @@ struct Prog
 
     struct Material **mats;
     size_t nmats;
+
+    float timediff;
 };
 
 struct Prog *prog_alloc(SDL_Window *w, SDL_Renderer *r);

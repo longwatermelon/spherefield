@@ -65,7 +65,7 @@ void prog_mainloop(struct Prog *p)
     while (p->running)
     {
         end = SDL_GetTicks();
-        float diff = end - start;
+        p->timediff = end - start;
         start = end;
 //        fps = frame_time > 0 ? 1000.f / frame_time : 0.f;
 
@@ -85,7 +85,7 @@ void prog_mainloop(struct Prog *p)
                 p->spheres[i]->c.z = 20.f;
             }
 
-            p->spheres[i]->c.z -= .01f * diff;
+            p->spheres[i]->c.z -= .01f * p->timediff;
         }
 
         SDL_RenderClear(p->rend);
@@ -109,6 +109,13 @@ void prog_events(struct Prog *p, SDL_Event *evt)
             break;
         }
     }
+
+    const Uint8* keys = SDL_GetKeyboardState(0);
+
+    if (keys[SDL_SCANCODE_LEFT]) p->cam.x -= .003f * p->timediff;
+    if (keys[SDL_SCANCODE_RIGHT]) p->cam.x += .003f * p->timediff;
+
+    p->cam.x = fmin(fmax(p->cam.x, -3.f), 3.f);
 }
 
 
@@ -116,12 +123,12 @@ void prog_render(struct Prog *p)
 {
     float fov = 1.f;
 
-    for (int y = 250; y < 500; ++y)
+    for (int y = 200; y < 400; ++y)
     {
-        for (int x = 0; x < 500; ++x)
+        for (int x = 0; x < 400; ++x)
         {
-            float ha = ((float)x / 500.f) * fov - (fov / 2.f);
-            float va = ((float)y / 500.f) * fov - (fov / 2.f);
+            float ha = ((float)x / 400.f) * fov - (fov / 2.f);
+            float va = ((float)y / 400.f) * fov - (fov / 2.f);
 
             Vec3f dir = vec_normalize((Vec3f){ ha, va, 1.f });
 
