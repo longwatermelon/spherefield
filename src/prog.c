@@ -11,7 +11,7 @@ struct Prog *prog_alloc(SDL_Window *w, SDL_Renderer *r)
     p->window = w;
     p->rend = r;
 
-    p->font = TTF_OpenFont("res/font.ttf", 16);
+    p->font = TTF_OpenFont("res/font.ttf", 14);
 
     p->cam = (Vec3f){ 0.f, -1.f, 0.f };
 
@@ -67,9 +67,12 @@ bool prog_mainloop(struct Prog *p)
 {
     SDL_Event evt;
 
+    Uint32 abs_begin = SDL_GetTicks();
     Uint32 start = SDL_GetTicks();
     Uint32 end = SDL_GetTicks();
+
     bool restart = false;
+    float score = 0.f;
 
     while (p->running)
     {
@@ -162,9 +165,24 @@ bool prog_mainloop(struct Prog *p)
             flash_dir = .01f;
         }
 
+        if (!p->dead)
+        {
+            score = (end - abs_begin) / 1000.f;
+        }
+
         SDL_RenderClear(p->rend);
 
         prog_render(p);
+
+        {
+            char s[20] = { 0 };
+            sprintf(s, "Time: %.1fs", score);
+            SDL_Texture *score_tex = util_render_text(p->rend, p->font, s, (SDL_Color){ 255, 255, 255 });
+            SDL_Rect r = { 10, 20 };
+            SDL_QueryTexture(score_tex, 0, 0, &r.w, &r.h);
+            SDL_RenderCopy(p->rend, score_tex, 0, &r);
+            SDL_DestroyTexture(score_tex);
+        }
 
         if (p->dead)
         {
